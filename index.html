@@ -1,1 +1,400 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Exercices – Capteurs / Actionneurs</title>
+
+  <style>
+    :root{
+      --ok:#16a34a;
+      --ko:#dc2626;
+      --text:#1f1f1f;
+      --muted:#6b6b6b;
+      --accent:#2563eb;
+      --bg:#ffffff;
+      --card:#fafafa;
+      --border:#e5e5e5;
+    }
+
+    body{
+      margin:0;
+      font-family: "Segoe UI", Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 20px;
+      font-size: 18px;
+    }
+
+    h1{font-size:1.8rem;margin:0 0 8px;font-weight:700;}
+    h2{font-size:1.4rem;margin:0 0 10px;}
+
+    p{color:var(--muted);margin-top:0;}
+
+    .container{max-width:1000px;margin:0 auto;display:grid;gap:18px;}
+
+    .card{
+      background: var(--card);
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:18px;
+    }
+
+    .table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0 10px;
+    }
+    .row{
+      background: #fff;
+      border:1px solid var(--border);
+      border-radius:10px;
+    }
+    .row td{
+      padding:14px 12px;
+      vertical-align:middle;
+    }
+    .label{
+      font-weight:700;
+    }
+
+    select{
+      width:100%;
+      padding:14px 12px;
+      border-radius:10px;
+      border:1px solid #cfcfcf;
+      background:#fff;
+      font-size:1rem;
+      min-height:48px;
+    }
+
+    .status{
+      font-size:1rem;
+      font-weight:800;
+      text-align:center;
+      padding:8px 10px;
+      border-radius:999px;
+      display:inline-block;
+      min-width:86px;
+    }
+    .ok{
+      background:rgba(16,140,50,.15);
+      color:#0f8a2e;
+      border:1px solid rgba(16,140,50,.4);
+    }
+    .ko{
+      background:rgba(220,38,38,.12);
+      color:#b91c1c;
+      border:1px solid rgba(220,38,38,.35);
+    }
+    .neutral{
+      background:#f3f3f3;
+      color:#888;
+      border:1px solid #e5e5e5;
+    }
+
+    .actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:14px;
+      align-items:center;
+    }
+    button{
+      appearance:none;
+      border:none;
+      border-radius:10px;
+      padding:12px 18px;
+      font-weight:800;
+      cursor:pointer;
+      background:var(--accent);
+      color:white;
+      font-size:1rem;
+      min-height:48px;
+    }
+    button.secondary{
+      background:#fff;
+      border:2px solid var(--border);
+      color:var(--text);
+    }
+
+    .score{
+      margin-left:auto;
+      font-weight:900;
+      background:#fff;
+      padding:10px 14px;
+      border-radius:10px;
+      border:1px solid var(--border);
+      font-size:1rem;
+    }
+
+    .progress{
+      height:10px;
+      background:#e5e5e5;
+      border-radius:999px;
+      overflow:hidden;
+      margin-top:8px;
+    }
+    .bar{
+      height:100%;
+      width:0%;
+      background:var(--accent);
+      transition:width .25s ease;
+    }
+
+    .small{
+      font-size:.9rem;color:var(--muted);
+      margin-top:6px;
+    }
+
+    @media (max-width: 820px){
+      body{font-size:19px;}
+    }
+  </style>
+
+</head>
+<body>
+
+  <div class="container">
+    <header class="card">
+      <h1>Exercices – Capteurs / Actionneurs</h1>
+      <p>Choisis la bonne réponse dans la liste déroulante, puis clique sur “Vérifier”.</p>
+      <div class="progress"><div class="bar" id="globalBar"></div></div>
+      <div class="small" id="globalMsg">Progression : 0%</div>
+    </header>
+
+    <!-- EXO 1 -->
+    <section class="card" id="exo1">
+      <h2>Exercice 1 – Capteur ou Actionneur ?</h2>
+      <p>Choisis pour chaque élément : <b>Capteur</b>, <b>Actionneur</b> ou <b>Ni l’un ni l’autre</b>.</p>
+
+      <table class="table"><tbody id="exo1-body"></tbody></table>
+
+      <div class="actions">
+        <button onclick="checkExo1()">Vérifier Exo 1</button>
+        <button class="secondary" onclick="resetExo1()">Réinitialiser</button>
+        <div class="score" id="score1">Score : —</div>
+      </div>
+    </section>
+
+    <!-- EXO 2 -->
+    <section class="card" id="exo2">
+      <h2>Exercice 2 – Capteur → Grandeur physique détectée</h2>
+      <p>Associe chaque capteur à sa grandeur physique.</p>
+
+      <table class="table"><tbody id="exo2-body"></tbody></table>
+
+      <div class="actions">
+        <button onclick="checkExo2()">Vérifier Exo 2</button>
+        <button class="secondary" onclick="resetExo2()">Réinitialiser</button>
+        <div class="score" id="score2">Score : —</div>
+      </div>
+
+      <p class="small">Rappel : une <b>grandeur physique</b> est une information mesurable (distance, lumière, température, etc).</p>
+    </section>
+  </div>
+
+  <!-- ====== FOOTER ====== -->
+  <footer style="
+    margin-top: 40px;
+    padding: 25px 10px;
+    text-align: center;
+    font-size: 1rem;
+    color: #3a3a3a;
+    border-top: 2px solid #e6e6e6;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+  ">
+    Vincent Belhaire<br>
+    <span style="font-weight: 700;">Technologie – Le système automatisé</span>
+  </footer>
+
+
+<script>
+  // ===== Exo 1 =====
+  const exo1Items = [
+    "Altimètre","Anémomètre","Cellule infrarouge","Cellule photoélectrique",
+    "Clavier","Électrovanne","Éolienne","Gyrophare","Hygromètre","Interrupteur",
+    "Lampe","Manomètre","Microphone","Moteur","Résistance chauffante",
+    "Thermistance","Ventilateur","Vérin"
+  ];
+
+  const exo1Answers = {
+    "Altimètre":"Capteur",
+    "Anémomètre":"Capteur",
+    "Cellule infrarouge":"Capteur",
+    "Cellule photoélectrique":"Capteur",
+    "Clavier":"Capteur",
+    "Électrovanne":"Actionneur",
+    "Éolienne":"Ni l’un ni l’autre",
+    "Gyrophare":"Actionneur",
+    "Hygromètre":"Capteur",
+    "Interrupteur":"Capteur",
+    "Lampe":"Actionneur",
+    "Manomètre":"Capteur",
+    "Microphone":"Capteur",
+    "Moteur":"Actionneur",
+    "Résistance chauffante":"Actionneur",
+    "Thermistance":"Capteur",
+    "Ventilateur":"Actionneur",
+    "Vérin":"Actionneur"
+  };
+
+  const exo1Choices = ["— Choisir —","Capteur","Actionneur","Ni l’un ni l’autre"];
+
+
+  // ===== Exo 2 =====
+  const exo2Items = [
+    "Accéléromètre","Cellule à ultrasons","Cellule piézoélectrique","Débitmètre",
+    "Girouette","Minuterie","Photorésistance","Sonomètre"
+  ];
+
+  const exo2Answers = {
+    "Accéléromètre":"Accélération / décélération",
+    "Cellule à ultrasons":"Distance",
+    "Cellule piézoélectrique":"Volume sonore",
+    "Débitmètre":"Débit d’un fluide",
+    "Girouette":"Direction du vent",
+    "Minuterie":"Temps",
+    "Photorésistance":"Luminosité",
+    "Sonomètre":"Volume sonore"
+  };
+
+  const exo2Choices = [
+    "— Choisir —",
+    "Accélération / décélération",
+    "Distance",
+    "Volume sonore",
+    "Débit d’un fluide",
+    "Direction du vent",
+    "Temps",
+    "Luminosité"
+  ];
+
+  // ===== Render =====
+  function renderExo1(){
+    const body = document.getElementById("exo1-body");
+    body.innerHTML = "";
+
+    exo1Items.forEach((item,i)=>{
+      const tr = document.createElement("tr");
+      tr.className = "row";
+      tr.innerHTML = `
+        <td class="label">${i+1}. ${item}</td>
+        <td style="width:38%">
+          <select data-item="${item}" class="exo1-select">
+            ${exo1Choices.map(c=>`<option value="${c}">${c}</option>`).join("")}
+          </select>
+        </td>
+        <td style="width:18%; text-align:right">
+          <span class="status neutral" id="exo1-status-${i}">À faire</span>
+        </td>`;
+      body.appendChild(tr);
+    });
+  }
+
+  function renderExo2(){
+    const body = document.getElementById("exo2-body");
+    body.innerHTML = "";
+
+    exo2Items.forEach((item,i)=>{
+      const tr = document.createElement("tr");
+      tr.className = "row";
+      tr.innerHTML = `
+        <td class="label">${i+1}. ${item}</td>
+        <td style="width:48%">
+          <select data-item="${item}" class="exo2-select">
+            ${exo2Choices.map(c=>`<option value="${c}">${c}</option>`).join("")}
+          </select>
+        </td>
+        <td style="width:18%; text-align:right">
+          <span class="status neutral" id="exo2-status-${i}">À faire</span>
+        </td>`;
+      body.appendChild(tr);
+    });
+  }
+
+  function updateGlobalProgress(){
+    const selects = [...document.querySelectorAll("select")];
+    const done = selects.filter(s=>s.value!=="— Choisir —").length;
+    const total = selects.length;
+    const pct = Math.round(done/total*100);
+    document.getElementById("globalBar").style.width = pct + "%";
+    document.getElementById("globalMsg").textContent = `Progression : ${pct}% (${done}/${total})`;
+  }
+
+  document.addEventListener("change", e=>{
+    if(e.target.tagName==="SELECT") updateGlobalProgress();
+  });
+
+  function checkExo1(){
+    const selects = document.querySelectorAll(".exo1-select");
+    let score = 0;
+    selects.forEach((sel,i)=>{
+      const item = sel.dataset.item;
+      const user = sel.value;
+      const ok = exo1Answers[item];
+      const status = document.getElementById(`exo1-status-${i}`);
+      if(user === ok){
+        score++;
+        status.textContent = "OK";
+        status.className = "status ok";
+      }else{
+        status.textContent = user==="— Choisir —" ? "Faux" : `Faux → ${ok}`;
+        status.className = "status ko";
+      }
+    });
+    document.getElementById("score1").textContent = `Score : ${score} / ${exo1Items.length}`;
+  }
+
+  function resetExo1(){
+    document.querySelectorAll(".exo1-select").forEach(sel=>sel.selectedIndex=0);
+    exo1Items.forEach((_,i)=>{
+      const status = document.getElementById(`exo1-status-${i}`);
+      status.textContent = "À faire";
+      status.className = "status neutral";
+    });
+    document.getElementById("score1").textContent = "Score : —";
+    updateGlobalProgress();
+  }
+
+
+  function checkExo2(){
+    const selects = document.querySelectorAll(".exo2-select");
+    let score = 0;
+    selects.forEach((sel,i)=>{
+      const item = sel.dataset.item;
+      const user = sel.value;
+      const ok = exo2Answers[item];
+      const status = document.getElementById(`exo2-status-${i}`);
+      if(user === ok){
+        score++;
+        status.textContent = "OK";
+        status.className = "status ok";
+      }else{
+        status.textContent = user==="— Choisir —" ? "Faux" : `Faux → ${ok}`;
+        status.className = "status ko";
+      }
+    });
+    document.getElementById("score2").textContent = `Score : ${score} / ${exo2Items.length}`;
+  }
+
+  function resetExo2(){
+    document.querySelectorAll(".exo2-select").forEach(sel=>sel.selectedIndex=0);
+    exo2Items.forEach((_,i)=>{
+      const status = document.getElementById(`exo2-status-${i}`);
+      status.textContent = "À faire";
+      status.className = "status neutral";
+    });
+    document.getElementById("score2").textContent = "Score : —";
+    updateGlobalProgress();
+  }
+
+  // Init
+  renderExo1();
+  renderExo2();
+  updateGlobalProgress();
+
+</script>
+</body>
+</html>
 
